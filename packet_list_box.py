@@ -23,19 +23,25 @@ class PacketListBox(urwid.ListBox):
             if self.is_searching:
                 self.moved = False
             return
+        elif key == 'e':
+            self.update_list(last_position=True)
         elif key in ['up', 'down']:
             self.moved = True
         urwid.ListBox.keypress(self, size, key)
         return key
 
-    def update_list(self, reset_position=False):
+    def update_list(self, reset_position=False, last_position = False):
         last_focus = self.content.get_focus()[1]
         self.content = urwid.SimpleListWalker(self.widgets)
-        if not reset_position and self.content:
+        if last_position:
+            self.content.set_focus(len(self.widgets) - 1)
+            self.moved = False
+        elif not reset_position and self.content:
             if self.moved:
                 self.content.set_focus(last_focus)
             else:
                 self.content.set_focus(len(self.widgets) - 1)
+
         urwid.ListBox.__init__(self, self.content)
 
     def add_item(self, raw):
